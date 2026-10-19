@@ -1,0 +1,14 @@
+[package]
+name = "crabwire"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.104"
+crossterm = { version = "0.29.0", features = ["event-stream"] }
+crossterm-keybind = { version = "0.4.2", features = ["derive"]}
+serde = { version = "1.0", features = ["derive"] }
+futures = "0.3.34"
+ratatui = "0.30.2"
+tokio = {  version = "1.53.2", features = ["full"] }
+wifi-ctrl = "0.3.0"
