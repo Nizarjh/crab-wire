@@ -1,4 +1,6 @@
-use std::net::IpAddr;
+use std::{fmt, net::IpAddr};
+
+use crate::event::Event;
 
 /// Application.
 #[derive(Debug, Default)]
@@ -14,9 +16,11 @@ pub struct App {
     // overlays
     pub overlay: Overlay,
     // Connection state
-    pub connection: ConnectionState,
+    pub connection_state: ConnectionState,
+    // Connection info(like interface)
+    pub connection_info: ConnectionInfo,
     // Vector of errors
-    pub notifications: Vec<crate::event::Event>,
+    pub notifications: Vec<Event>,
     // vector of wifi networks
     pub networks: Vec<Network>,
 }
@@ -73,5 +77,15 @@ impl App {
     /// Set should_quit to true to quit the application.
     pub fn quit(&mut self) {
         self.should_quit = true;
+    }
+}
+
+impl fmt::Display for ConnectionState {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ConnectionState::Connected(_) => write!(f, "Connected"),
+            ConnectionState::Disconnected => write!(f, "Disconnected"),
+            ConnectionState::Connecting => write!(f, "Connecting"),
+        }
     }
 }
