@@ -23,24 +23,26 @@ pub struct App {
     pub notifications: Vec<Event>,
     // vector of wifi networks
     pub networks: Vec<Network>,
+    // saved networks
+    pub saved_networks: Vec<Network>,
 }
 
 #[derive(Debug, Default)]
 pub enum Screen {
     #[default]
-    Activation,
-    Menu,
+    Main,
     KnownNetworks,
     NetworkDetails,
     Interfaces,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, PartialEq, Eq)]
 pub enum Overlay {
     #[default]
     None,
     PasswordInput,
     ConfirmDisconnect,
+    Menu,
 }
 
 #[derive(Debug, Default)]

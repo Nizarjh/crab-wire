@@ -1,14 +1,32 @@
 use ratatui::{
     Frame,
-    layout::{Alignment, Constraint, Layout},
+    layout::{Alignment, Constraint, Layout, Rect},
     style::{Color, Style},
-    widgets::{Block, BorderType, Borders, List, ListItem, Paragraph},
+    widgets::{Block, BorderType, Borders, Clear, List, ListItem, Paragraph},
 };
 
-use crate::app::App;
+use crate::app::{App, Overlay, Screen};
 
 pub fn render(app: &App, frame: &mut Frame) {
     let area = frame.area();
+    match app.screen {
+        Screen::Main => {
+            render_main(area, app, frame);
+
+            match app.overlay {
+                Overlay::None => {}
+                Overlay::PasswordInput => todo!(),
+                Overlay::ConfirmDisconnect => todo!(),
+                Overlay::Menu => render_menu(area, frame),
+            }
+        }
+        Screen::KnownNetworks => todo!(),
+        Screen::NetworkDetails => todo!(),
+        Screen::Interfaces => todo!(),
+    }
+}
+
+fn render_main(area: Rect, app: &App, frame: &mut Frame) {
     let outer = Block::default()
         .title(" Crabwire ")
         .title_alignment(Alignment::Center)
@@ -16,7 +34,7 @@ pub fn render(app: &App, frame: &mut Frame) {
         .border_type(BorderType::Rounded)
         .style(Style::default().fg(Color::Yellow));
 
-    let inner_area = outer.inner(area);
+    let status_block = outer.inner(area);
     frame.render_widget(outer, area);
 
     let [head, networks, status, help] = Layout::vertical([
@@ -25,7 +43,7 @@ pub fn render(app: &App, frame: &mut Frame) {
         Constraint::Length(3),
         Constraint::Length(1),
     ])
-    .areas(inner_area);
+    .areas(status_block);
 
     frame.render_widget(
         Paragraph::new("Activate a connection").alignment(Alignment::Center),
@@ -55,5 +73,32 @@ pub fn render(app: &App, frame: &mut Frame) {
     frame.render_widget(
         Paragraph::new("↑↓ Select   Enter Activate   Esc Menu   q Quit"),
         help,
+    );
+}
+
+fn render_menu(area: Rect, frame: &mut Frame) {
+    let popup_area = area.centered(Constraint::Percentage(20), Constraint::Length(9));
+
+    let popup_block = Block::default()
+        .title(" Crabwire Menu ")
+        .title_alignment(Alignment::Center)
+        .borders(Borders::ALL)
+        .border_type(BorderType::Rounded)
+        .style(Style::default().fg(Color::Yellow).bg(Color::Black));
+
+    let menu_area = popup_block.inner(popup_area);
+
+    frame.render_widget(Clear, popup_area);
+    frame.render_widget(popup_block, popup_area);
+
+    let items = ["Known Networks", "Interfaces", "About", "Close Menu"]
+        .into_iter()
+        .map(|i | ListItem::from(i))
+        .collect::<Vec<_>>();
+
+    frame.render_widget(
+        List::new(items)
+        .style(Style::default().fg(Color::White).bg(Color::Black)),
+        menu_area,
     );
 }
