@@ -1,4 +1,7 @@
-use ratatui::crossterm::event::{KeyCode, KeyEvent};
+use ratatui::{
+    crossterm::event::{KeyCode, KeyEvent},
+    widgets::ListState,
+};
 
 use crate::app::{App, Overlay};
 
@@ -8,7 +11,9 @@ pub async fn handle_key_event(app: &mut App, key_event: KeyEvent) {
         KeyCode::Char('q') => app.quit(),
         KeyCode::Esc => {
             if app.overlay == Overlay::None {
-                app.overlay = Overlay::Menu;
+                app.overlay = Overlay::Menu {
+                    state: ListState::default().with_selected(Some(0)),
+                };
             } else {
                 app.overlay = Overlay::None;
             }

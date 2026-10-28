@@ -1,5 +1,7 @@
 use std::{fmt, net::IpAddr};
 
+use ratatui::widgets::ListState;
+
 use crate::event::Event;
 
 /// Application.
@@ -7,7 +9,7 @@ use crate::event::Event;
 pub struct App {
     // should the application exit?
     pub should_quit: bool,
-    // selected network in Activation menu
+    // selected network in Main menu
     pub selected_network: usize,
     // what in focus statusbar or what
     pub focus: Focus,
@@ -42,7 +44,9 @@ pub enum Overlay {
     None,
     PasswordInput,
     ConfirmDisconnect,
-    Menu,
+    Menu {
+        state: ListState,
+    },
 }
 
 #[derive(Debug, Default)]
@@ -52,18 +56,21 @@ pub enum ConnectionState {
     Connecting,
     Connected(ConnectionInfo),
 }
+
 #[derive(Debug, Default)]
 pub enum Focus {
     #[default]
     NetworkList,
     StatusBar,
 }
+
 #[derive(Debug, Default)]
 pub struct ConnectionInfo {
     pub interface: String,
     pub network: String,
     pub ip: Option<IpAddr>,
 }
+
 #[derive(Debug, Default)]
 pub struct Network {
     pub ssid: String,

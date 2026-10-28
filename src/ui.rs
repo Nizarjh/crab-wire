@@ -1,8 +1,8 @@
 use ratatui::{
     Frame,
     layout::{Alignment, Constraint, Layout, Rect},
-    style::{Color, Style},
-    widgets::{Block, BorderType, Borders, Clear, List, ListItem, Paragraph},
+    style::{Color, Modifier, Style, palette::tailwind::SLATE},
+    widgets::{Block, BorderType, Borders, Clear, List, ListItem, ListState, Paragraph},
 };
 
 use crate::app::{App, Overlay, Screen};
@@ -17,7 +17,7 @@ pub fn render(app: &App, frame: &mut Frame) {
                 Overlay::None => {}
                 Overlay::PasswordInput => todo!(),
                 Overlay::ConfirmDisconnect => todo!(),
-                Overlay::Menu => render_menu(area, frame),
+                Overlay::Menu { mut state } => render_menu(area, frame, &mut state),
             }
         }
         Screen::KnownNetworks => todo!(),
@@ -76,7 +76,7 @@ fn render_main(area: Rect, app: &App, frame: &mut Frame) {
     );
 }
 
-fn render_menu(area: Rect, frame: &mut Frame) {
+fn render_menu(area: Rect, frame: &mut Frame, state: &mut ListState) {
     let popup_area = area.centered(Constraint::Percentage(20), Constraint::Length(9));
 
     let popup_block = Block::default()
@@ -93,12 +93,12 @@ fn render_menu(area: Rect, frame: &mut Frame) {
 
     let items = ["Known Networks", "Interfaces", "About", "Close Menu"]
         .into_iter()
-        .map(|i | ListItem::from(i))
+        .map(|i| ListItem::from(i))
         .collect::<Vec<_>>();
 
-    frame.render_widget(
-        List::new(items)
-        .style(Style::default().fg(Color::White).bg(Color::Black)),
-        menu_area,
-    );
+    let list = List::new(items)
+        .highlight_style(Style::new().bg(SLATE.c800).add_modifier(Modifier::BOLD))
+        .style(Style::default().fg(Color::White).bg(Color::Black));
+
+    frame.render_stateful_widget(list, menu_area, state);
 }
