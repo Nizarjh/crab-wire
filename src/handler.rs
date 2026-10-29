@@ -39,10 +39,18 @@ fn handle_key_event_for_main(keycode: KeyCode, app: &mut App, len_of_networks: u
 
             KeyCode::Up => {
                 state.select_previous();
+
+                if state.selected() == Some(3) {
+                    state.select_previous();
+                }
             }
 
             KeyCode::Down => {
                 state.select_next();
+
+                if state.selected() == Some(3) {
+                    state.select_next();
+                }
             }
 
             _ => {}

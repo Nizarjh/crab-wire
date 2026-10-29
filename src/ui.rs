@@ -101,7 +101,8 @@ fn render_menu(area: Rect, frame: &mut Frame, state: &mut ListState) {
     let items = [
         ListItem::new(Line::from("Known Networks").alignment(Alignment::Center)),
         ListItem::new(Line::from("Interfaces").alignment(Alignment::Center)),
-        ListItem::new(Text::from("Keybinds\n\n").alignment(Alignment::Center)),
+        ListItem::new(Text::from("Keybinds").alignment(Alignment::Center)),
+        ListItem::new(Line::from("")),
         ListItem::new(Line::from("About").alignment(Alignment::Center)),
     ];
 
