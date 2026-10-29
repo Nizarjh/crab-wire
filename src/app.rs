@@ -19,8 +19,6 @@ pub struct App {
     pub overlay: Overlay,
     // Connection state
     pub connection_state: ConnectionState,
-    // Connection info(like interface)
-    pub connection_info: ConnectionInfo,
     // Vector of errors
     pub notifications: Vec<Event>,
     // vector of wifi networks

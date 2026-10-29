@@ -6,7 +6,7 @@ use ratatui::{
     widgets::{Block, BorderType, Borders, Clear, List, ListItem, ListState, Paragraph},
 };
 
-use crate::app::{App, Overlay, Screen};
+use crate::app::{App, ConnectionState, Overlay, Screen};
 
 pub fn render(app: &App, frame: &mut Frame) {
     let area = frame.area();
@@ -62,14 +62,14 @@ fn render_main(area: Rect, app: &App, frame: &mut Frame) {
 
     frame.render_widget(List::new(list_network), networks);
 
-    frame.render_widget(
-        Paragraph::new(format!(
-            "{}  ○ {}",
-            app.connection_state, app.connection_info.interface
-        ))
-        .block(inner_network),
-        status,
-    );
+    let text = match &app.connection_state {
+        ConnectionState::Connected(info) => {
+            format!("{}  ○ {}", app.connection_state, info.interface)
+        }
+        _ => app.connection_state.to_string(),
+    };
+
+    frame.render_widget(Paragraph::new(text).block(inner_network), status);
 
     frame.render_widget(
         Paragraph::new("↑↓ Select   Enter Activate   Esc Menu   q Quit"),
