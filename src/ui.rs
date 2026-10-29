@@ -2,6 +2,7 @@ use ratatui::{
     Frame,
     layout::{Alignment, Constraint, Layout, Rect},
     style::{Color, Modifier, Style, palette::tailwind::SLATE},
+    text::{Line, Text},
     widgets::{Block, BorderType, Borders, Clear, List, ListItem, ListState, Paragraph},
 };
 
@@ -77,11 +78,9 @@ fn render_main(area: Rect, app: &App, frame: &mut Frame) {
 }
 
 fn render_menu(area: Rect, frame: &mut Frame, state: &mut ListState) {
-    let popup_area = area.centered(Constraint::Percentage(20), Constraint::Length(9));
+    let popup_area = area.centered(Constraint::Length(30), Constraint::Length(9));
 
     let popup_block = Block::default()
-        .title(" Crabwire Menu ")
-        .title_alignment(Alignment::Center)
         .borders(Borders::ALL)
         .border_type(BorderType::Rounded)
         .style(Style::default().fg(Color::Yellow).bg(Color::Black));
@@ -91,14 +90,24 @@ fn render_menu(area: Rect, frame: &mut Frame, state: &mut ListState) {
     frame.render_widget(Clear, popup_area);
     frame.render_widget(popup_block, popup_area);
 
-    let items = ["Known Networks", "Interfaces", "About", "Close Menu"]
-        .into_iter()
-        .map(|i| ListItem::from(i))
-        .collect::<Vec<_>>();
+    let [head, area_for_items] =
+        Layout::vertical([Constraint::Length(2), Constraint::Min(5)]).areas(menu_area);
+
+    frame.render_widget(
+        Paragraph::new("Please select an option").alignment(Alignment::Center),
+        head,
+    );
+
+    let items = [
+        ListItem::new(Line::from("Known Networks").alignment(Alignment::Center)),
+        ListItem::new(Line::from("Interfaces").alignment(Alignment::Center)),
+        ListItem::new(Text::from("Keybinds\n\n").alignment(Alignment::Center)),
+        ListItem::new(Line::from("About").alignment(Alignment::Center)),
+    ];
 
     let list = List::new(items)
         .highlight_style(Style::new().bg(SLATE.c800).add_modifier(Modifier::BOLD))
         .style(Style::default().fg(Color::White).bg(Color::Black));
 
-    frame.render_stateful_widget(list, menu_area, state);
+    frame.render_stateful_widget(list, area_for_items, state);
 }
