@@ -3,36 +3,49 @@ use ratatui::{
     widgets::ListState,
 };
 
-use crate::app::{App, Overlay};
+use crate::app::{App, Overlay, Screen};
 
 pub async fn handle_key_event(app: &mut App, key_event: KeyEvent) {
     let len_of_networks = app.networks.len();
-    match key_event.code {
-        KeyCode::Char('q') => app.quit(),
-        KeyCode::Esc => {
-            if app.overlay == Overlay::None {
+    match app.screen {
+        Screen::Main => handle_key_event_for_main(key_event.code, app, len_of_networks),
+        Screen::KnownNetworks => todo!(),
+        Screen::NetworkDetails => todo!(),
+        Screen::Interfaces => todo!(),
+    }
+}
+
+fn handle_key_event_for_main(keycode: KeyCode, app: &mut App, len_of_networks: usize) {
+    match &mut app.overlay {
+        Overlay::None => match keycode {
+            KeyCode::Char('q') => app.quit(),
+            KeyCode::Esc => {
                 app.overlay = Overlay::Menu {
                     state: ListState::default().with_selected(Some(0)),
                 };
-            } else {
+            }
+            KeyCode::Up => {}
+            KeyCode::Down => {}
+            _ => {}
+        },
+        Overlay::PasswordInput => todo!(),
+        Overlay::ConfirmDisconnect => todo!(),
+        Overlay::Menu { state } => match keycode {
+            KeyCode::Char('q') => app.quit(),
+
+            KeyCode::Esc => {
                 app.overlay = Overlay::None;
             }
-        }
 
-        KeyCode::Up if len_of_networks != 0 => {
-            if app.selected_network != 0 {
-                app.selected_network -= 1
-            } else {
-                app.selected_network = len_of_networks - 1
+            KeyCode::Up => {
+                state.select_previous();
             }
-        }
-        KeyCode::Down if len_of_networks != 0 => {
-            if app.selected_network != len_of_networks - 1 {
-                app.selected_network += 1
-            } else {
-                app.selected_network = 0
+
+            KeyCode::Down => {
+                state.select_next();
             }
-        }
-        _ => {}
-    };
+
+            _ => {}
+        },
+    }
 }
